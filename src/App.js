@@ -16,12 +16,12 @@ import {
 
 class App extends React.Component {
   componentDidUpdate = () => {
-    const {state} = this.props;
+    const { state } = this.props;
     const { isAutoCheck } = state;
     if (isAutoCheck === true) {
       setTimeout(() => {
-        this.onHandleClick(Math.floor(Math.random()*399));
-      }, 200)
+        this.onHandleClick(Math.floor(Math.random() * 399));
+      }, 200);
     }
   };
 
@@ -1001,7 +1001,7 @@ class App extends React.Component {
       );
     });
 
-    let jumps = Math.floor(Math.random()*(history.length - 1));
+    let jumps = Math.floor(Math.random() * (history.length - 1));
 
     if (isDown) {
       moves = this.sortMoveList(moves);
@@ -1042,7 +1042,7 @@ class App extends React.Component {
             <button
               type="button"
               className="btn btn-outline-secondary"
-              onClick={() => this.jumpTo(history.length-1)}
+              onClick={() => this.jumpTo(history.length - 1)}
             >
               Redo
             </button>

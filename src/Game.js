@@ -1,12 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import { Icon, Button, Form, Input } from 'antd';
+import { Icon, Button } from 'antd';
 import { connect } from 'react-redux';
 import 'antd/dist/antd.css';
 import App from './App';
 import SignIn from './containers/SignIn';
 import Register from './containers/Register';
 import Update from './containers/SignIn/update';
+import Chatbox from './components/Chatbox';
 import { logoutUser, fetchProfile, resetSquares } from './actions';
 
 const jwt = require('jsonwebtoken');
@@ -15,7 +16,6 @@ class Game extends React.PureComponent {
   componentDidMount = () => {
     const { fetchedProfile } = this.props;
     fetchedProfile();
-    console.log('/me');
   };
 
   handleClick = e => {
@@ -122,17 +122,29 @@ class Game extends React.PureComponent {
           {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
           <div className="actionDisplay">
-            <Switch>
-              <Route path="/register">
-                <Register />
-              </Route>
-              <Route path="/signin">
-                <SignIn />
-              </Route>
-              <Route path="/">
-                <App />
-              </Route>
-            </Switch>
+            <div>
+              <h1>Caro Game</h1>
+              <div style={{ float: 'right' }}>
+                <h6>
+                  <b>Chế độ:</b>{' '}
+                </h6>
+                <button>Đánh với máy</button>
+                <button>Đánh với người</button>
+              </div>
+            </div>
+            <div className="caroBoard">
+              <Switch>
+                <Route path="/register">
+                  <Register />
+                </Route>
+                <Route path="/signin">
+                  <SignIn />
+                </Route>
+                <Route path="/">
+                  <App />
+                </Route>
+              </Switch>
+            </div>
           </div>
         </div>
         <br />

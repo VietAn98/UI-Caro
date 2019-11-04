@@ -94,10 +94,10 @@ li {
 
 .container{
   margin: auto;
-  margin-bottom: 10px;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
   padding-top: 20px;
-  width: 80%;
+  width: 100%;
+  position: relative;
   display: flex;
   flex-wrap: nowrap;
   box-shadow: 12px 11px 56px -14px rgba(170, 170, 170, 0.75);
@@ -113,4 +113,9 @@ li {
 
 .actionDisplay{
   width: 75%;
+  margin-left: 20px;
+}
+
+.caroBoard{
+  margin-top: 90px;
 }

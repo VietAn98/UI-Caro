@@ -24,3 +24,69 @@
   display: flex;
   justify-content: space-between;
 }
+
+/* Chat box */
+.messenger {
+  background: white;
+  width: 90%;
+  height: 50%;
+  font-size: 17px;
+  margin: 6px;
+  border: 1px dashed rgb(8, 212, 185);
+  border-radius: 2%;
+  position: relative;
+  padding-bottom: 0px;
+}
+
+.message-header {
+  position: absolute;
+  top: 5px;
+  text-align: center;
+  width: 100%;
+}
+
+.message-body {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: block;
+  height: 500px;
+}
+
+.message-text {
+  width: fit-content;
+  padding: 6px 15px;
+  border-radius: 50px;
+  background: royalblue;
+  color: white;
+  white-space: pre-line;
+  word-wrap: break-word;
+  word-break: break-all;
+  max-width: 65%;
+  text-align: left;
+}
+
+.message-time {
+  font-size: 12px;
+  display: inline;
+}
+
+/* Message send vs input */
+.message-input {
+  position: absolute;
+  bottom: 0;
+}
+
+.messenger input {
+  border-radius: 50px;
+  margin-left: 10px;
+  margin-bottom: -20px;
+  text-indent: 10px;
+}
+
+.messenger button {
+  border-radius: 50px;
+  margin-right: 10px;
+}
