@@ -1,20 +1,22 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import { Icon, Button } from 'antd';
+import { Icon, Button, Form, Input } from 'antd';
 import { connect } from 'react-redux';
 import 'antd/dist/antd.css';
 import App from './App';
 import SignIn from './containers/SignIn';
 import Register from './containers/Register';
+import Update from './containers/SignIn/update';
 import { logoutUser, fetchProfile, resetSquares } from './actions';
 
 const jwt = require('jsonwebtoken');
 
 class Game extends React.PureComponent {
-  // componentDidMount = () => {
-  //   const { fetchedProfile } = this.props;
-  //   fetchedProfile();
-  // };
+  componentDidMount = () => {
+    const { fetchedProfile } = this.props;
+    fetchedProfile();
+    console.log('/me');
+  };
 
   handleClick = e => {
     e.preventDefault();
@@ -26,20 +28,40 @@ class Game extends React.PureComponent {
 
   render() {
     const tokenn = localStorage.token;
-    if (tokenn) {
-      const decodeToken = jwt.decode(tokenn);
-      // const { state } = this.props;
+
+    if (tokenn != null) {
+      const { state } = this.props;
+      const { currentUser } = state;
+      console.log('state', state);
+
+      // const decodeToken = jwt.decode(tokenn);
+      // console.log('state.currentUser.username', currentUser.username);
       return (
         <Router>
           <div className="container">
             <div className="listDisplay">
               <ul style={{ listStyleType: 'none', fontSize: '20px' }}>
-                <li>
-                  <Icon type="user" /> {decodeToken.username}
-                </li>
+                {currentUser.username !== '' ? (
+                  <li>
+                    <Icon type="user" /> {currentUser.username}
+                  </li>
+                ) : null}
                 <li>
                   <Link to="/">
-                    <Icon type="home" /> Trang chủ
+                    <Icon
+                      type="home"
+                      style={{ color: 'rgba(103, 166, 128)' }}
+                    />{' '}
+                    Trang chủ
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/updateProfile">
+                    <Icon
+                      type="setting"
+                      style={{ color: 'rgba(250, 147, 207)' }}
+                    />{' '}
+                    Cập nhập thông tin
                   </Link>
                 </li>
                 <li>
@@ -53,6 +75,9 @@ class Game extends React.PureComponent {
               renders the first one that matches the current URL. */}
             <div className="actionDisplay">
               <Switch>
+                <Route path="/updateProfile">
+                  <Update />
+                </Route>
                 <Route path="/register">
                   <Register />
                 </Route>

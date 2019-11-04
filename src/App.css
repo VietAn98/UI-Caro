@@ -106,6 +106,9 @@ li {
 .listDisplay{
   width: 20%;
   border-right: 1px solid #ecc4ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .actionDisplay{

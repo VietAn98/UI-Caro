@@ -40,12 +40,17 @@ export const userRegister = status => ({
   status
 });
 
-export function fetchRegister(username, password) {
+export function fetchRegister(email, username, password, date, gender, avatar) {
+  console.log('avatar/register', avatar);
   return dispatch => {
     return axios
-      .post(`https://restful-api-1612907.herokuapp.com/user/register`, {
+      .post(`http://localhost:5000/user/register`, {
+        email,
         username,
-        password
+        password,
+        date,
+        gender,
+        avatar
       })
       .then(respond => console.log('Respond:', respond))
       .then(status => dispatch(userRegister(status)))
@@ -55,20 +60,20 @@ export function fetchRegister(username, password) {
 
 export const userLogin = user => ({
   type: 'USER_LOGIN',
-  user
+  payload: user
 });
 
-export function fetchLogin(username, password) {
+export function fetchLogin(email, password) {
   return dispatch => {
     return axios
-      .post(`https://restful-api-1612907.herokuapp.com/user/login`, {
-        username,
+      .post(`http://localhost:5000/user/login`, {
+        email,
         password
       })
       .then(respond => respond.data)
       .then(data => {
         if (data.message) {
-          //
+          localStorage.removeItem('token');
         } else {
           localStorage.setItem('token', data.token);
           dispatch(userLogin(data.user));
@@ -82,8 +87,10 @@ export const fetchProfile = () => {
     const tokenn = localStorage.token;
     if (tokenn) {
       return axios
-        .get('https://restful-api-1612907.herokuapp.com/me', {
+        .get('http://localhost:5000/me', {
           headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
             Authorization: `Bearer ${tokenn}`
           }
         })
@@ -92,8 +99,8 @@ export const fetchProfile = () => {
           if (data.message) {
             localStorage.removeItem('token');
           } else {
-            console.log('data', data);
-            dispatch(userLogin(data));
+            // console.log('data/me', data[0]);
+            dispatch(userLogin(data[0]));
           }
         });
     }
@@ -103,4 +110,32 @@ export const fetchProfile = () => {
 
 export const logoutUser = () => ({
   type: 'LOGOUT_USER'
+});
+
+export function fetchEdit(id, username, password, date, gender, avatar) {
+  return dispatch => {
+    return axios
+      .post(`http://localhost:5000/user/edit`, {
+        id,
+        username,
+        password,
+        date,
+        gender,
+        avatar
+      })
+      .then(respond => respond.data)
+      .then(data => {
+        if (data.message) {
+          localStorage.removeItem('token');
+        } else {
+          // console.log('data/edit', data);
+          dispatch(userLogin(data));
+        }
+      });
+  };
+}
+
+export const setAutoCheck = (isAutoCheck) => ({
+  type: 'SET_AUTO_CHECK',
+  isAutoCheck
 });

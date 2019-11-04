@@ -1,16 +1,34 @@
-import React from "react";
-import Swal from "sweetalert2";
-import { connect } from 'react-redux'
-import "./App.css";
-import Board from "./components/Board";
-import { saveHistory, checkAsWin, checkIfLastStep, checkIfNotLastStep,
-  resetSquares, ascendingSort, decreasingSort } from "./actions/index";
+import React from 'react';
+import Swal from 'sweetalert2';
+import { connect } from 'react-redux';
+import './App.css';
+import Board from './components/Board';
+import {
+  saveHistory,
+  checkAsWin,
+  checkIfLastStep,
+  checkIfNotLastStep,
+  resetSquares,
+  ascendingSort,
+  decreasingSort,
+  setAutoCheck
+} from './actions/index';
 
 class App extends React.Component {
+  componentDidUpdate = () => {
+    const {state} = this.props;
+    const { isAutoCheck } = state;
+    if (isAutoCheck === true) {
+      setTimeout(() => {
+        this.onHandleClick(Math.floor(Math.random()*399));
+      }, 200)
+    }
+  };
+
   onHandleClick = i => {
-    const {state, saveHistories, checkAsWinning} = this.props;
-    let {history} = state;
-    const {stepNumber, checkWin, isNext} = state;
+    const { state, saveHistories, checkAsWinning, setAutoCheckk } = this.props;
+    let { history, isAutoCheck } = state;
+    const { stepNumber, checkWin, isNext } = state;
     history = history.slice(0, stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
@@ -20,58 +38,59 @@ class App extends React.Component {
     }
 
     if (squares[i] === null) {
-      squares[i] = isNext ? "X" : "O";
+      squares[i] = isNext ? 'X' : 'O';
+      setAutoCheckk(isAutoCheck);
       saveHistories(history, squares, isNext);
       switch (squares[i]) {
         default:
           break;
-        case "X":
+        case 'X':
           if (
-            squares[i + 1] === "X" &&
-            squares[i + 2] === "X" &&
-            squares[i + 3] === "X" &&
-            squares[i + 4] === "X" &&
-            ((squares[i - 1] === "O" && squares[i + 5] !== "O") ||
-              (squares[i - 1] !== "O" && squares[i + 5] === "O") ||
-              (squares[i - 1] !== "O" && squares[i + 5] !== "O"))
+            squares[i + 1] === 'X' &&
+            squares[i + 2] === 'X' &&
+            squares[i + 3] === 'X' &&
+            squares[i + 4] === 'X' &&
+            ((squares[i - 1] === 'O' && squares[i + 5] !== 'O') ||
+              (squares[i - 1] !== 'O' && squares[i + 5] === 'O') ||
+              (squares[i - 1] !== 'O' && squares[i + 5] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
             });
 
             winSquares.push(i + 1, i + 2, i, i + 3, i + 4);
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1] === "X" &&
-            squares[i + 2] === "X" &&
-            squares[i + 3] === "X" &&
-            squares[i - 1] === "X" &&
-            ((squares[i - 2] === "O" && squares[i + 4] !== "O") ||
-              (squares[i - 2] !== "O" && squares[i + 4] === "O") ||
-              (squares[i - 2] !== "O" && squares[i + 4] !== "O"))
+            squares[i + 1] === 'X' &&
+            squares[i + 2] === 'X' &&
+            squares[i + 3] === 'X' &&
+            squares[i - 1] === 'X' &&
+            ((squares[i - 2] === 'O' && squares[i + 4] !== 'O') ||
+              (squares[i - 2] !== 'O' && squares[i + 4] === 'O') ||
+              (squares[i - 2] !== 'O' && squares[i + 4] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
             });
 
             winSquares.push(i + 1, i + 2, i, i + 3, i - 1);
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1] === "X" &&
-            squares[i + 2] === "X" &&
-            squares[i - 1] === "X" &&
-            squares[i - 2] === "X" &&
-            ((squares[i - 3] === "O" && squares[i + 3] !== "O") ||
-              (squares[i - 3] !== "O" && squares[i + 3] === "O") ||
-              (squares[i - 3] !== "O" && squares[i + 3] !== "O"))
+            squares[i + 1] === 'X' &&
+            squares[i + 2] === 'X' &&
+            squares[i - 1] === 'X' &&
+            squares[i - 2] === 'X' &&
+            ((squares[i - 3] === 'O' && squares[i + 3] !== 'O') ||
+              (squares[i - 3] !== 'O' && squares[i + 3] === 'O') ||
+              (squares[i - 3] !== 'O' && squares[i + 3] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -83,17 +102,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1] === "X" &&
-            squares[i - 2] === "X" &&
-            squares[i - 3] === "X" &&
-            squares[i + 1] === "X" &&
-            ((squares[i - 4] === "O" && squares[i + 2] !== "O") ||
-              (squares[i - 4] !== "O" && squares[i + 2] === "O") ||
-              (squares[i - 4] !== "O" && squares[i + 2] !== "O"))
+            squares[i - 1] === 'X' &&
+            squares[i - 2] === 'X' &&
+            squares[i - 3] === 'X' &&
+            squares[i + 1] === 'X' &&
+            ((squares[i - 4] === 'O' && squares[i + 2] !== 'O') ||
+              (squares[i - 4] !== 'O' && squares[i + 2] === 'O') ||
+              (squares[i - 4] !== 'O' && squares[i + 2] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -105,17 +124,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1] === "X" &&
-            squares[i - 2] === "X" &&
-            squares[i - 3] === "X" &&
-            squares[i - 4] === "X" &&
-            ((squares[i + 1] === "O" && squares[i - 5] !== "O") ||
-              (squares[i + 1] !== "O" && squares[i - 5] === "O") ||
-              (squares[i + 1] !== "O" && squares[i - 5] !== "O"))
+            squares[i - 1] === 'X' &&
+            squares[i - 2] === 'X' &&
+            squares[i - 3] === 'X' &&
+            squares[i - 4] === 'X' &&
+            ((squares[i + 1] === 'O' && squares[i - 5] !== 'O') ||
+              (squares[i + 1] !== 'O' && squares[i - 5] === 'O') ||
+              (squares[i + 1] !== 'O' && squares[i - 5] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -129,17 +148,17 @@ class App extends React.Component {
 
           // hang doc
           if (
-            squares[i + 20] === "X" &&
-            squares[i + 40] === "X" &&
-            squares[i + 60] === "X" &&
-            squares[i + 80] === "X" &&
-            ((squares[i - 20] === "O" && squares[i + 100] !== "O") ||
-              (squares[i - 20] !== "O" && squares[i + 100] === "O") ||
-              (squares[i - 20] !== "O" && squares[i + 100] !== "O"))
+            squares[i + 20] === 'X' &&
+            squares[i + 40] === 'X' &&
+            squares[i + 60] === 'X' &&
+            squares[i + 80] === 'X' &&
+            ((squares[i - 20] === 'O' && squares[i + 100] !== 'O') ||
+              (squares[i - 20] !== 'O' && squares[i + 100] === 'O') ||
+              (squares[i - 20] !== 'O' && squares[i + 100] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -151,17 +170,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 20] === "X" &&
-            squares[i + 2 * 20] === "X" &&
-            squares[i + 3 * 20] === "X" &&
-            squares[i - 1 * 20] === "X" &&
-            ((squares[i - 2 * 20] === "O" && squares[i + 4 * 20] !== "O") ||
-              (squares[i - 2 * 20] !== "O" && squares[i + 4 * 20] === "O") ||
-              (squares[i - 2 * 20] !== "O" && squares[i + 4 * 20] !== "O"))
+            squares[i + 1 * 20] === 'X' &&
+            squares[i + 2 * 20] === 'X' &&
+            squares[i + 3 * 20] === 'X' &&
+            squares[i - 1 * 20] === 'X' &&
+            ((squares[i - 2 * 20] === 'O' && squares[i + 4 * 20] !== 'O') ||
+              (squares[i - 2 * 20] !== 'O' && squares[i + 4 * 20] === 'O') ||
+              (squares[i - 2 * 20] !== 'O' && squares[i + 4 * 20] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -173,17 +192,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 20] === "X" &&
-            squares[i + 2 * 20] === "X" &&
-            squares[i - 1 * 20] === "X" &&
-            squares[i - 2 * 20] === "X" &&
-            ((squares[i - 3 * 20] === "O" && squares[i + 3 * 20] !== "O") ||
-              (squares[i - 3 * 20] !== "O" && squares[i + 3 * 20] === "O") ||
-              (squares[i - 3 * 20] !== "O" && squares[i + 3 * 20] !== "O"))
+            squares[i + 1 * 20] === 'X' &&
+            squares[i + 2 * 20] === 'X' &&
+            squares[i - 1 * 20] === 'X' &&
+            squares[i - 2 * 20] === 'X' &&
+            ((squares[i - 3 * 20] === 'O' && squares[i + 3 * 20] !== 'O') ||
+              (squares[i - 3 * 20] !== 'O' && squares[i + 3 * 20] === 'O') ||
+              (squares[i - 3 * 20] !== 'O' && squares[i + 3 * 20] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -195,34 +214,34 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1 * 20] === "X" &&
-            squares[i - 2 * 20] === "X" &&
-            squares[i - 60] === "X" &&
-            squares[i + 20] === "X" &&
-            ((squares[i - 80] === "O" && squares[i + 40] !== "O") ||
-              (squares[i - 80] !== "O" && squares[i + 40] === "O") ||
-              (squares[i - 80] !== "O" && squares[i + 40] !== "O"))
+            squares[i - 1 * 20] === 'X' &&
+            squares[i - 2 * 20] === 'X' &&
+            squares[i - 60] === 'X' &&
+            squares[i + 20] === 'X' &&
+            ((squares[i - 80] === 'O' && squares[i + 40] !== 'O') ||
+              (squares[i - 80] !== 'O' && squares[i + 40] === 'O') ||
+              (squares[i - 80] !== 'O' && squares[i + 40] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
             });
 
             winSquares.push(i - 20, i - 40, i, i - 60, i + 20);
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 20] === "X" &&
-            squares[i - 40] === "X" &&
-            squares[i - 60] === "X" &&
-            squares[i - 80] === "X" &&
-            ((squares[i + 20] === "O" && squares[i - 100] !== "O") ||
-              (squares[i + 20] !== "O" && squares[i - 100] === "O") ||
-              (squares[i + 20] !== "O" && squares[i - 100] !== "O"))
+            squares[i - 20] === 'X' &&
+            squares[i - 40] === 'X' &&
+            squares[i - 60] === 'X' &&
+            squares[i - 80] === 'X' &&
+            ((squares[i + 20] === 'O' && squares[i - 100] !== 'O') ||
+              (squares[i + 20] !== 'O' && squares[i - 100] === 'O') ||
+              (squares[i + 20] !== 'O' && squares[i - 100] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
             });
 
             winSquares.push(i - 20, i - 40, i, i - 60, i - 80);
@@ -231,34 +250,34 @@ class App extends React.Component {
 
           // cheo phai
           if (
-            squares[i + 1 * 19] === "X" &&
-            squares[i + 2 * 19] === "X" &&
-            squares[i + 3 * 19] === "X" &&
-            squares[i + 4 * 19] === "X" &&
-            ((squares[i - 1 * 19] === "O" && squares[i + 5 * 19] !== "O") ||
-              (squares[i - 1 * 19] !== "O" && squares[i + 5 * 19] === "O") ||
-              (squares[i - 1 * 19] !== "O" && squares[i + 5 * 19] !== "O"))
+            squares[i + 1 * 19] === 'X' &&
+            squares[i + 2 * 19] === 'X' &&
+            squares[i + 3 * 19] === 'X' &&
+            squares[i + 4 * 19] === 'X' &&
+            ((squares[i - 1 * 19] === 'O' && squares[i + 5 * 19] !== 'O') ||
+              (squares[i - 1 * 19] !== 'O' && squares[i + 5 * 19] === 'O') ||
+              (squares[i - 1 * 19] !== 'O' && squares[i + 5 * 19] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
             });
 
             winSquares.push(i + 1 * 19, i + 2 * 19, i, i + 3 * 19, i + 4 * 19);
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 19] === "X" &&
-            squares[i + 2 * 19] === "X" &&
-            squares[i + 3 * 19] === "X" &&
-            squares[i - 1 * 19] === "X" &&
-            ((squares[i - 2 * 19] === "O" && squares[i + 4 * 19] !== "O") ||
-              (squares[i - 2 * 19] !== "O" && squares[i + 4 * 19] === "O") ||
-              (squares[i - 2 * 19] !== "O" && squares[i + 4 * 19] !== "O"))
+            squares[i + 1 * 19] === 'X' &&
+            squares[i + 2 * 19] === 'X' &&
+            squares[i + 3 * 19] === 'X' &&
+            squares[i - 1 * 19] === 'X' &&
+            ((squares[i - 2 * 19] === 'O' && squares[i + 4 * 19] !== 'O') ||
+              (squares[i - 2 * 19] !== 'O' && squares[i + 4 * 19] === 'O') ||
+              (squares[i - 2 * 19] !== 'O' && squares[i + 4 * 19] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -270,17 +289,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 19] === "X" &&
-            squares[i + 2 * 19] === "X" &&
-            squares[i - 1 * 19] === "X" &&
-            squares[i - 2 * 19] === "X" &&
-            ((squares[i - 3 * 19] === "O" && squares[i + 3 * 19] !== "O") ||
-              (squares[i - 3 * 19] !== "O" && squares[i + 3 * 19] === "O") ||
-              (squares[i - 3 * 19] !== "O" && squares[i + 3 * 19] !== "O"))
+            squares[i + 1 * 19] === 'X' &&
+            squares[i + 2 * 19] === 'X' &&
+            squares[i - 1 * 19] === 'X' &&
+            squares[i - 2 * 19] === 'X' &&
+            ((squares[i - 3 * 19] === 'O' && squares[i + 3 * 19] !== 'O') ||
+              (squares[i - 3 * 19] !== 'O' && squares[i + 3 * 19] === 'O') ||
+              (squares[i - 3 * 19] !== 'O' && squares[i + 3 * 19] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -292,17 +311,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1 * 19] === "X" &&
-            squares[i - 2 * 19] === "X" &&
-            squares[i - 3 * 19] === "X" &&
-            squares[i + 1 * 19] === "X" &&
-            ((squares[i - 4 * 19] === "O" && squares[i + 2 * 19] !== "O") ||
-              (squares[i - 4 * 19] !== "O" && squares[i + 2 * 19] === "O") ||
-              (squares[i - 4 * 19] !== "O" && squares[i + 2 * 19] !== "O"))
+            squares[i - 1 * 19] === 'X' &&
+            squares[i - 2 * 19] === 'X' &&
+            squares[i - 3 * 19] === 'X' &&
+            squares[i + 1 * 19] === 'X' &&
+            ((squares[i - 4 * 19] === 'O' && squares[i + 2 * 19] !== 'O') ||
+              (squares[i - 4 * 19] !== 'O' && squares[i + 2 * 19] === 'O') ||
+              (squares[i - 4 * 19] !== 'O' && squares[i + 2 * 19] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -314,17 +333,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1 * 19] === "X" &&
-            squares[i - 2 * 19] === "X" &&
-            squares[i - 3 * 19] === "X" &&
-            squares[i - 4 * 19] === "X" &&
-            ((squares[i + 1 * 19] === "O" && squares[i - 5 * 19] !== "O") ||
-              (squares[i + 1 * 19] !== "O" && squares[i - 5 * 19] === "O") ||
-              (squares[i + 1 * 19] !== "O" && squares[i - 5 * 19] !== "O"))
+            squares[i - 1 * 19] === 'X' &&
+            squares[i - 2 * 19] === 'X' &&
+            squares[i - 3 * 19] === 'X' &&
+            squares[i - 4 * 19] === 'X' &&
+            ((squares[i + 1 * 19] === 'O' && squares[i - 5 * 19] !== 'O') ||
+              (squares[i + 1 * 19] !== 'O' && squares[i - 5 * 19] === 'O') ||
+              (squares[i + 1 * 19] !== 'O' && squares[i - 5 * 19] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -338,17 +357,17 @@ class App extends React.Component {
 
           // cheo trai
           if (
-            squares[i + 1 * 21] === "X" &&
-            squares[i + 2 * 21] === "X" &&
-            squares[i + 3 * 21] === "X" &&
-            squares[i + 4 * 21] === "X" &&
-            ((squares[i - 1 * 21] === "O" && squares[i + 5 * 21] !== "O") ||
-              (squares[i - 1 * 21] !== "O" && squares[i + 5 * 21] === "O") ||
-              (squares[i - 1 * 21] !== "O" && squares[i + 5 * 21] !== "O"))
+            squares[i + 1 * 21] === 'X' &&
+            squares[i + 2 * 21] === 'X' &&
+            squares[i + 3 * 21] === 'X' &&
+            squares[i + 4 * 21] === 'X' &&
+            ((squares[i - 1 * 21] === 'O' && squares[i + 5 * 21] !== 'O') ||
+              (squares[i - 1 * 21] !== 'O' && squares[i + 5 * 21] === 'O') ||
+              (squares[i - 1 * 21] !== 'O' && squares[i + 5 * 21] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -360,17 +379,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 21] === "X" &&
-            squares[i + 2 * 21] === "X" &&
-            squares[i + 3 * 21] === "X" &&
-            squares[i - 1 * 21] === "X" &&
-            ((squares[i - 2 * 21] === "O" && squares[i + 4 * 21] !== "O") ||
-              (squares[i - 2 * 21] !== "O" && squares[i + 4 * 21] === "O") ||
-              (squares[i - 2 * 21] !== "O" && squares[i + 4 * 21] !== "O"))
+            squares[i + 1 * 21] === 'X' &&
+            squares[i + 2 * 21] === 'X' &&
+            squares[i + 3 * 21] === 'X' &&
+            squares[i - 1 * 21] === 'X' &&
+            ((squares[i - 2 * 21] === 'O' && squares[i + 4 * 21] !== 'O') ||
+              (squares[i - 2 * 21] !== 'O' && squares[i + 4 * 21] === 'O') ||
+              (squares[i - 2 * 21] !== 'O' && squares[i + 4 * 21] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -382,17 +401,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 21] === "X" &&
-            squares[i + 2 * 21] === "X" &&
-            squares[i - 1 * 21] === "X" &&
-            squares[i - 1 * 21] === "X" &&
-            ((squares[i - 3 * 21] === "O" && squares[i + 3 * 21] !== "O") ||
-              (squares[i - 3 * 21] !== "O" && squares[i + 3 * 21] === "O") ||
-              (squares[i - 3 * 21] !== "O" && squares[i + 3 * 21] !== "O"))
+            squares[i + 1 * 21] === 'X' &&
+            squares[i + 2 * 21] === 'X' &&
+            squares[i - 1 * 21] === 'X' &&
+            squares[i - 1 * 21] === 'X' &&
+            ((squares[i - 3 * 21] === 'O' && squares[i + 3 * 21] !== 'O') ||
+              (squares[i - 3 * 21] !== 'O' && squares[i + 3 * 21] === 'O') ||
+              (squares[i - 3 * 21] !== 'O' && squares[i + 3 * 21] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -404,17 +423,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1 * 21] === "X" &&
-            squares[i - 2 * 21] === "X" &&
-            squares[i - 2 * 21] === "X" &&
-            squares[i + 1 * 21] === "X" &&
-            ((squares[i - 4 * 21] === "O" && squares[i + 2 * 21] !== "O") ||
-              (squares[i - 4 * 21] !== "O" && squares[i + 2 * 21] === "O") ||
-              (squares[i - 4 * 21] !== "O" && squares[i + 2 * 21] !== "O"))
+            squares[i - 1 * 21] === 'X' &&
+            squares[i - 2 * 21] === 'X' &&
+            squares[i - 2 * 21] === 'X' &&
+            squares[i + 1 * 21] === 'X' &&
+            ((squares[i - 4 * 21] === 'O' && squares[i + 2 * 21] !== 'O') ||
+              (squares[i - 4 * 21] !== 'O' && squares[i + 2 * 21] === 'O') ||
+              (squares[i - 4 * 21] !== 'O' && squares[i + 2 * 21] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -426,17 +445,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1 * 21] === "X" &&
-            squares[i - 2 * 21] === "X" &&
-            squares[i - 3 * 21] === "X" &&
-            squares[i - 4 * 21] === "X" &&
-            ((squares[i + 1 * 21] === "O" && squares[i - 5 * 21] !== "O") ||
-              (squares[i + 1 * 21] !== "O" && squares[i - 5 * 21] === "O") ||
-              (squares[i + 1 * 21] !== "O" && squares[i - 5 * 21] !== "O"))
+            squares[i - 1 * 21] === 'X' &&
+            squares[i - 2 * 21] === 'X' &&
+            squares[i - 3 * 21] === 'X' &&
+            squares[i - 4 * 21] === 'X' &&
+            ((squares[i + 1 * 21] === 'O' && squares[i - 5 * 21] !== 'O') ||
+              (squares[i + 1 * 21] !== 'O' && squares[i - 5 * 21] === 'O') ||
+              (squares[i + 1 * 21] !== 'O' && squares[i - 5 * 21] !== 'O'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng X đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng X đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -448,19 +467,19 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           break;
-        case "O":
+        case 'O':
           if (
-            squares[i + 1] === "O" &&
-            squares[i + 2] === "O" &&
-            squares[i + 3] === "O" &&
-            squares[i + 4] === "O" &&
-            ((squares[i - 1] === "X" && squares[i + 5] !== "X") ||
-              (squares[i - 1] !== "X" && squares[i + 5] === "X") ||
-              (squares[i - 1] !== "X" && squares[i + 5] !== "X"))
+            squares[i + 1] === 'O' &&
+            squares[i + 2] === 'O' &&
+            squares[i + 3] === 'O' &&
+            squares[i + 4] === 'O' &&
+            ((squares[i - 1] === 'X' && squares[i + 5] !== 'X') ||
+              (squares[i - 1] !== 'X' && squares[i + 5] === 'X') ||
+              (squares[i - 1] !== 'X' && squares[i + 5] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -472,17 +491,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1] === "O" &&
-            squares[i + 2] === "O" &&
-            squares[i + 3] === "O" &&
-            squares[i - 1] === "O" &&
-            ((squares[i - 2] === "X" && squares[i + 4] !== "X") ||
-              (squares[i - 2] !== "X" && squares[i + 4] === "X") ||
-              (squares[i - 2] !== "X" && squares[i + 4] !== "X"))
+            squares[i + 1] === 'O' &&
+            squares[i + 2] === 'O' &&
+            squares[i + 3] === 'O' &&
+            squares[i - 1] === 'O' &&
+            ((squares[i - 2] === 'X' && squares[i + 4] !== 'X') ||
+              (squares[i - 2] !== 'X' && squares[i + 4] === 'X') ||
+              (squares[i - 2] !== 'X' && squares[i + 4] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -494,17 +513,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1] === "O" &&
-            squares[i + 2] === "O" &&
-            squares[i - 1] === "O" &&
-            squares[i - 2] === "O" &&
-            ((squares[i - 3] === "X" && squares[i + 3] !== "X") ||
-              (squares[i - 3] !== "X" && squares[i + 3] === "X") ||
-              (squares[i - 3] !== "X" && squares[i + 3] !== "X"))
+            squares[i + 1] === 'O' &&
+            squares[i + 2] === 'O' &&
+            squares[i - 1] === 'O' &&
+            squares[i - 2] === 'O' &&
+            ((squares[i - 3] === 'X' && squares[i + 3] !== 'X') ||
+              (squares[i - 3] !== 'X' && squares[i + 3] === 'X') ||
+              (squares[i - 3] !== 'X' && squares[i + 3] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -516,17 +535,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1] === "O" &&
-            squares[i - 2] === "O" &&
-            squares[i - 3] === "O" &&
-            squares[i + 1] === "O" &&
-            ((squares[i - 4] === "X" && squares[i + 2] !== "X") ||
-              (squares[i - 4] !== "X" && squares[i + 2] === "X") ||
-              (squares[i - 4] !== "X" && squares[i + 2] !== "X"))
+            squares[i - 1] === 'O' &&
+            squares[i - 2] === 'O' &&
+            squares[i - 3] === 'O' &&
+            squares[i + 1] === 'O' &&
+            ((squares[i - 4] === 'X' && squares[i + 2] !== 'X') ||
+              (squares[i - 4] !== 'X' && squares[i + 2] === 'X') ||
+              (squares[i - 4] !== 'X' && squares[i + 2] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -538,17 +557,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1] === "O" &&
-            squares[i - 2] === "O" &&
-            squares[i - 3] === "O" &&
-            squares[i - 4] === "O" &&
-            ((squares[i + 1] === "X" && squares[i - 5] !== "X") ||
-              (squares[i + 1] !== "X" && squares[i - 5] === "X") ||
-              (squares[i + 1] !== "X" && squares[i - 5] !== "X"))
+            squares[i - 1] === 'O' &&
+            squares[i - 2] === 'O' &&
+            squares[i - 3] === 'O' &&
+            squares[i - 4] === 'O' &&
+            ((squares[i + 1] === 'X' && squares[i - 5] !== 'X') ||
+              (squares[i + 1] !== 'X' && squares[i - 5] === 'X') ||
+              (squares[i + 1] !== 'X' && squares[i - 5] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -562,17 +581,17 @@ class App extends React.Component {
 
           // hang doc
           if (
-            squares[i + 20] === "O" &&
-            squares[i + 40] === "O" &&
-            squares[i + 60] === "O" &&
-            squares[i + 80] === "O" &&
-            ((squares[i - 20] === "X" && squares[i + 100] !== "X") ||
-              (squares[i - 20] !== "X" && squares[i + 100] === "X") ||
-              (squares[i - 20] !== "X" && squares[i + 100] !== "X"))
+            squares[i + 20] === 'O' &&
+            squares[i + 40] === 'O' &&
+            squares[i + 60] === 'O' &&
+            squares[i + 80] === 'O' &&
+            ((squares[i - 20] === 'X' && squares[i + 100] !== 'X') ||
+              (squares[i - 20] !== 'X' && squares[i + 100] === 'X') ||
+              (squares[i - 20] !== 'X' && squares[i + 100] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -584,17 +603,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 20] === "O" &&
-            squares[i + 2 * 20] === "O" &&
-            squares[i + 3 * 20] === "O" &&
-            squares[i - 1 * 20] === "O" &&
-            ((squares[i - 2 * 20] === "X" && squares[i + 4 * 20] !== "X") ||
-              (squares[i - 2 * 20] !== "X" && squares[i + 4 * 20] === "X") ||
-              (squares[i - 2 * 20] !== "X" && squares[i + 4 * 20] !== "X"))
+            squares[i + 1 * 20] === 'O' &&
+            squares[i + 2 * 20] === 'O' &&
+            squares[i + 3 * 20] === 'O' &&
+            squares[i - 1 * 20] === 'O' &&
+            ((squares[i - 2 * 20] === 'X' && squares[i + 4 * 20] !== 'X') ||
+              (squares[i - 2 * 20] !== 'X' && squares[i + 4 * 20] === 'X') ||
+              (squares[i - 2 * 20] !== 'X' && squares[i + 4 * 20] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -606,17 +625,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 20] === "O" &&
-            squares[i + 2 * 20] === "O" &&
-            squares[i - 1 * 20] === "O" &&
-            squares[i - 2 * 20] === "O" &&
-            ((squares[i - 3 * 20] === "X" && squares[i + 3 * 20] !== "X") ||
-              (squares[i - 3 * 20] !== "X" && squares[i + 3 * 20] === "X") ||
-              (squares[i - 3 * 20] !== "X" && squares[i + 3 * 20] !== "X"))
+            squares[i + 1 * 20] === 'O' &&
+            squares[i + 2 * 20] === 'O' &&
+            squares[i - 1 * 20] === 'O' &&
+            squares[i - 2 * 20] === 'O' &&
+            ((squares[i - 3 * 20] === 'X' && squares[i + 3 * 20] !== 'X') ||
+              (squares[i - 3 * 20] !== 'X' && squares[i + 3 * 20] === 'X') ||
+              (squares[i - 3 * 20] !== 'X' && squares[i + 3 * 20] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -628,17 +647,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1 * 20] === "O" &&
-            squares[i - 2 * 20] === "O" &&
-            squares[i - 60] === "O" &&
-            squares[i + 20] === "O" &&
-            ((squares[i - 80] === "X" && squares[i + 40] !== "X") ||
-              (squares[i - 80] !== "X" && squares[i + 40] === "X") ||
-              (squares[i - 80] !== "X" && squares[i + 40] !== "X"))
+            squares[i - 1 * 20] === 'O' &&
+            squares[i - 2 * 20] === 'O' &&
+            squares[i - 60] === 'O' &&
+            squares[i + 20] === 'O' &&
+            ((squares[i - 80] === 'X' && squares[i + 40] !== 'X') ||
+              (squares[i - 80] !== 'X' && squares[i + 40] === 'X') ||
+              (squares[i - 80] !== 'X' && squares[i + 40] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -650,17 +669,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 20] === "O" &&
-            squares[i - 40] === "O" &&
-            squares[i - 60] === "O" &&
-            squares[i - 80] === "O" &&
-            ((squares[i + 20] === "X" && squares[i - 100] !== "X") ||
-              (squares[i + 20] !== "X" && squares[i - 100] === "X") ||
-              (squares[i + 20] !== "X" && squares[i - 100] !== "X"))
+            squares[i - 20] === 'O' &&
+            squares[i - 40] === 'O' &&
+            squares[i - 60] === 'O' &&
+            squares[i - 80] === 'O' &&
+            ((squares[i + 20] === 'X' && squares[i - 100] !== 'X') ||
+              (squares[i + 20] !== 'X' && squares[i - 100] === 'X') ||
+              (squares[i + 20] !== 'X' && squares[i - 100] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -674,17 +693,17 @@ class App extends React.Component {
 
           // cheo phai
           if (
-            squares[i + 1 * 19] === "O" &&
-            squares[i + 2 * 19] === "O" &&
-            squares[i + 3 * 19] === "O" &&
-            squares[i + 4 * 19] === "O" &&
-            ((squares[i - 1 * 19] === "X" && squares[i + 5 * 19] !== "X") ||
-              (squares[i - 1 * 19] !== "X" && squares[i + 5 * 19] === "X") ||
-              (squares[i - 1 * 19] !== "X" && squares[i + 5 * 19] !== "X"))
+            squares[i + 1 * 19] === 'O' &&
+            squares[i + 2 * 19] === 'O' &&
+            squares[i + 3 * 19] === 'O' &&
+            squares[i + 4 * 19] === 'O' &&
+            ((squares[i - 1 * 19] === 'X' && squares[i + 5 * 19] !== 'X') ||
+              (squares[i - 1 * 19] !== 'X' && squares[i + 5 * 19] === 'X') ||
+              (squares[i - 1 * 19] !== 'X' && squares[i + 5 * 19] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -696,17 +715,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 19] === "O" &&
-            squares[i + 2 * 19] === "O" &&
-            squares[i + 3 * 19] === "O" &&
-            squares[i - 1 * 19] === "O" &&
-            ((squares[i - 2 * 19] === "X" && squares[i + 4 * 19] !== "X") ||
-              (squares[i - 2 * 19] !== "X" && squares[i + 4 * 19] === "X") ||
-              (squares[i - 2 * 19] !== "X" && squares[i + 4 * 19] !== "X"))
+            squares[i + 1 * 19] === 'O' &&
+            squares[i + 2 * 19] === 'O' &&
+            squares[i + 3 * 19] === 'O' &&
+            squares[i - 1 * 19] === 'O' &&
+            ((squares[i - 2 * 19] === 'X' && squares[i + 4 * 19] !== 'X') ||
+              (squares[i - 2 * 19] !== 'X' && squares[i + 4 * 19] === 'X') ||
+              (squares[i - 2 * 19] !== 'X' && squares[i + 4 * 19] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -718,17 +737,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 19] === "O" &&
-            squares[i + 2 * 19] === "O" &&
-            squares[i - 1 * 19] === "O" &&
-            squares[i - 2 * 19] === "O" &&
-            ((squares[i - 3 * 19] === "X" && squares[i + 3 * 19] !== "X") ||
-              (squares[i - 3 * 19] !== "X" && squares[i + 3 * 19] === "X") ||
-              (squares[i - 3 * 19] !== "X" && squares[i + 3 * 19] !== "X"))
+            squares[i + 1 * 19] === 'O' &&
+            squares[i + 2 * 19] === 'O' &&
+            squares[i - 1 * 19] === 'O' &&
+            squares[i - 2 * 19] === 'O' &&
+            ((squares[i - 3 * 19] === 'X' && squares[i + 3 * 19] !== 'X') ||
+              (squares[i - 3 * 19] !== 'X' && squares[i + 3 * 19] === 'X') ||
+              (squares[i - 3 * 19] !== 'X' && squares[i + 3 * 19] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -740,17 +759,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1 * 19] === "O" &&
-            squares[i - 2 * 19] === "O" &&
-            squares[i - 3 * 19] === "O" &&
-            squares[i + 1 * 19] === "O" &&
-            ((squares[i - 4 * 19] === "X" && squares[i + 2 * 19] !== "X") ||
-              (squares[i - 4 * 19] !== "X" && squares[i + 2 * 19] === "X") ||
-              (squares[i - 4 * 19] !== "X" && squares[i + 2 * 19] !== "X"))
+            squares[i - 1 * 19] === 'O' &&
+            squares[i - 2 * 19] === 'O' &&
+            squares[i - 3 * 19] === 'O' &&
+            squares[i + 1 * 19] === 'O' &&
+            ((squares[i - 4 * 19] === 'X' && squares[i + 2 * 19] !== 'X') ||
+              (squares[i - 4 * 19] !== 'X' && squares[i + 2 * 19] === 'X') ||
+              (squares[i - 4 * 19] !== 'X' && squares[i + 2 * 19] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -762,17 +781,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1 * 19] === "O" &&
-            squares[i - 2 * 19] === "O" &&
-            squares[i - 3 * 19] === "O" &&
-            squares[i - 4 * 19] === "O" &&
-            ((squares[i + 1 * 19] === "X" && squares[i - 5 * 19] !== "X") ||
-              (squares[i + 1 * 19] !== "X" && squares[i - 5 * 19] === "X") ||
-              (squares[i + 1 * 19] !== "X" && squares[i - 5 * 19] !== "X"))
+            squares[i - 1 * 19] === 'O' &&
+            squares[i - 2 * 19] === 'O' &&
+            squares[i - 3 * 19] === 'O' &&
+            squares[i - 4 * 19] === 'O' &&
+            ((squares[i + 1 * 19] === 'X' && squares[i - 5 * 19] !== 'X') ||
+              (squares[i + 1 * 19] !== 'X' && squares[i - 5 * 19] === 'X') ||
+              (squares[i + 1 * 19] !== 'X' && squares[i - 5 * 19] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -786,17 +805,17 @@ class App extends React.Component {
 
           // cheo trai
           if (
-            squares[i + 1 * 21] === "O" &&
-            squares[i + 2 * 21] === "O" &&
-            squares[i + 3 * 21] === "O" &&
-            squares[i + 4 * 21] === "O" &&
-            ((squares[i - 1 * 21] === "X" && squares[i + 5 * 21] !== "X") ||
-              (squares[i - 1 * 21] !== "X" && squares[i + 5 * 21] === "X") ||
-              (squares[i - 1 * 21] !== "X" && squares[i + 5 * 21] !== "X"))
+            squares[i + 1 * 21] === 'O' &&
+            squares[i + 2 * 21] === 'O' &&
+            squares[i + 3 * 21] === 'O' &&
+            squares[i + 4 * 21] === 'O' &&
+            ((squares[i - 1 * 21] === 'X' && squares[i + 5 * 21] !== 'X') ||
+              (squares[i - 1 * 21] !== 'X' && squares[i + 5 * 21] === 'X') ||
+              (squares[i - 1 * 21] !== 'X' && squares[i + 5 * 21] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -808,17 +827,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 21] === "O" &&
-            squares[i + 2 * 21] === "O" &&
-            squares[i + 3 * 21] === "O" &&
-            squares[i - 1 * 21] === "O" &&
-            ((squares[i - 2 * 21] === "X" && squares[i + 4 * 21] !== "X") ||
-              (squares[i - 2 * 21] !== "X" && squares[i + 4 * 21] === "X") ||
-              (squares[i - 2 * 21] !== "X" && squares[i + 4 * 21] !== "X"))
+            squares[i + 1 * 21] === 'O' &&
+            squares[i + 2 * 21] === 'O' &&
+            squares[i + 3 * 21] === 'O' &&
+            squares[i - 1 * 21] === 'O' &&
+            ((squares[i - 2 * 21] === 'X' && squares[i + 4 * 21] !== 'X') ||
+              (squares[i - 2 * 21] !== 'X' && squares[i + 4 * 21] === 'X') ||
+              (squares[i - 2 * 21] !== 'X' && squares[i + 4 * 21] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -830,17 +849,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i + 1 * 21] === "O" &&
-            squares[i + 2 * 21] === "O" &&
-            squares[i - 1 * 21] === "O" &&
-            squares[i - 2 * 21] === "O" &&
-            ((squares[i - 3 * 21] === "X" && squares[i + 3 * 21] !== "X") ||
-              (squares[i - 3 * 21] !== "X" && squares[i + 3 * 21] === "X") ||
-              (squares[i - 3 * 21] !== "X" && squares[i + 3 * 21] !== "X"))
+            squares[i + 1 * 21] === 'O' &&
+            squares[i + 2 * 21] === 'O' &&
+            squares[i - 1 * 21] === 'O' &&
+            squares[i - 2 * 21] === 'O' &&
+            ((squares[i - 3 * 21] === 'X' && squares[i + 3 * 21] !== 'X') ||
+              (squares[i - 3 * 21] !== 'X' && squares[i + 3 * 21] === 'X') ||
+              (squares[i - 3 * 21] !== 'X' && squares[i + 3 * 21] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -852,17 +871,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1 * 21] === "O" &&
-            squares[i - 2 * 21] === "O" &&
-            squares[i - 3 * 21] === "O" &&
-            squares[i + 1 * 21] === "O" &&
-            ((squares[i - 4 * 21] === "X" && squares[i + 2 * 21] !== "X") ||
-              (squares[i - 4 * 21] !== "X" && squares[i + 2 * 21] === "X") ||
-              (squares[i - 4 * 21] !== "X" && squares[i + 2 * 21] !== "X"))
+            squares[i - 1 * 21] === 'O' &&
+            squares[i - 2 * 21] === 'O' &&
+            squares[i - 3 * 21] === 'O' &&
+            squares[i + 1 * 21] === 'O' &&
+            ((squares[i - 4 * 21] === 'X' && squares[i + 2 * 21] !== 'X') ||
+              (squares[i - 4 * 21] !== 'X' && squares[i + 2 * 21] === 'X') ||
+              (squares[i - 4 * 21] !== 'X' && squares[i + 2 * 21] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -874,17 +893,17 @@ class App extends React.Component {
             checkAsWinning(winSquares);
           }
           if (
-            squares[i - 1 * 21] === "O" &&
-            squares[i - 2 * 21] === "O" &&
-            squares[i - 3 * 21] === "O" &&
-            squares[i - 4 * 21] === "O" &&
-            ((squares[i + 1 * 21] === "X" && squares[i - 5 * 21] !== "X") ||
-              (squares[i + 1 * 21] !== "X" && squares[i - 5 * 21] === "X") ||
-              (squares[i + 1 * 21] !== "X" && squares[i - 5 * 21] !== "X"))
+            squares[i - 1 * 21] === 'O' &&
+            squares[i - 2 * 21] === 'O' &&
+            squares[i - 3 * 21] === 'O' &&
+            squares[i - 4 * 21] === 'O' &&
+            ((squares[i + 1 * 21] === 'X' && squares[i - 5 * 21] !== 'X') ||
+              (squares[i + 1 * 21] !== 'X' && squares[i - 5 * 21] === 'X') ||
+              (squares[i + 1 * 21] !== 'X' && squares[i - 5 * 21] !== 'X'))
           ) {
             Swal.fire({
-              title: "Chúc Mừng!",
-              text: "Chúc mừng O đã thắng",
+              title: 'Chúc Mừng!',
+              text: 'Chúc mừng O đã thắng'
 
               // confirmButtonText: "Chơi lại",
               // onAfterClose: () => {
@@ -902,19 +921,18 @@ class App extends React.Component {
   };
 
   jumpTo(step) {
-    const {state, checkIfLastSteps, checkIfNotLastSteps} = this.props;
-    const {history, win, winSquaresTemp} = state;
-    const endPoint = history.length - 1
+    const { state, checkIfLastSteps, checkIfNotLastSteps } = this.props;
+    const { history, win, winSquaresTemp } = state;
+    const endPoint = history.length - 1;
     if (win === true && step === endPoint) {
       checkIfLastSteps(step, winSquaresTemp);
-    }
-    else {
+    } else {
       checkIfNotLastSteps(step);
     }
   }
 
   Reset() {
-    const {resetSquaress} = this.props;
+    const { resetSquaress } = this.props;
     resetSquaress();
   }
 
@@ -922,9 +940,9 @@ class App extends React.Component {
     // eslint-disable-next-line no-console
     console.log('sort', this);
     const newList = [];
-    let size = list.length
-    for (let i = 0; i < list.length; i+=1) {
-      newList.push(list[size - 1])
+    let size = list.length;
+    for (let i = 0; i < list.length; i += 1) {
+      newList.push(list[size - 1]);
       size -= 1;
     }
     return newList;
@@ -934,53 +952,56 @@ class App extends React.Component {
     // eslint-disable-next-line no-console
     console.log('sortMoveList', this);
     const newArr = [];
-    let {length} = list
-    for (let i = 0; i < list.length; i+=1) {
-      newArr.push(list[length - 1])
+    let { length } = list;
+    for (let i = 0; i < list.length; i += 1) {
+      newArr.push(list[length - 1]);
       length -= 1;
     }
     return newArr;
   }
 
   ascending(moves) {
-    const {state, ascendSort} = this.props;
-    const {isDown} = state;
+    const { state, ascendSort } = this.props;
+    const { isDown } = state;
     if (isDown) {
-      this.sort(moves)
+      this.sort(moves);
       ascendSort();
     }
     return null;
   }
 
   decrease(moves) {
-    const {state, decreaseSort} = this.props;
-    const {isUp} = state;
+    const { state, decreaseSort } = this.props;
+    const { isUp } = state;
     if (isUp) {
-      this.sort(moves)
+      this.sort(moves);
       decreaseSort();
     }
     return null;
   }
 
   render() {
-    const {state} = this.props;
-    const {history, stepNumber, isNext, isDown, winSquares} = state;
+    const { state } = this.props;
+    const { history, stepNumber, isNext, isDown, winSquares } = state;
     const current = history[stepNumber];
-    const status = ` Người chơi: ${isNext ? "X" : "O"}`;
+    const status = ` Người chơi: ${isNext ? 'X' : 'O'}`;
     let moves = history.map((step, move) => {
-      const desc = move ?
-        `Bước thứ #${move}` :
-        'Bước đầu tiên';
+      const desc = move ? `Bước thứ #${move}` : 'Bước đầu tiên';
       const key = move;
       return (
         <li key={key}>
-          <button
-          type="button"
-            onClick={() => this.jumpTo(move)}
-          >{stepNumber === move ? <span style={{ color: 'red' }}>{desc}</span> : <span>{desc}</span>}</button>
+          <button type="button" onClick={() => this.jumpTo(move)}>
+            {stepNumber === move ? (
+              <span style={{ color: 'red' }}>{desc}</span>
+            ) : (
+              <span>{desc}</span>
+            )}
+          </button>
         </li>
       );
     });
+
+    let jumps = Math.floor(Math.random()*(history.length - 1));
 
     if (isDown) {
       moves = this.sortMoveList(moves);
@@ -999,11 +1020,32 @@ class App extends React.Component {
         <div className="game-info">
           <div>{status}</div>
           <br />
-          <div><button onClick={() => this.Reset()} type="button" className="restart btn btn-outline-danger">Chơi lại</button></div>
+          <div>
+            <button
+              onClick={() => this.Reset()}
+              type="button"
+              className="restart btn btn-outline-danger"
+            >
+              Chơi lại
+            </button>
+          </div>
           <br />
           <div>
-            <button type="button" className="btn btn-outline-secondary" onClick={() => this.ascending(moves)} >Tăng</button>  &emsp;
-            <button type="button" className="btn btn-outline-secondary" onClick={() => this.decrease(moves)}>Giảm</button>
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={() => this.jumpTo(jumps)}
+            >
+              Undo
+            </button>{' '}
+            &emsp;
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={() => this.jumpTo(history.length-1)}
+            >
+              Redo
+            </button>
           </div>
           <br />
           <ol>{moves}</ol>
@@ -1018,13 +1060,19 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  saveHistories: (history, squares, isNext) => dispatch(saveHistory(history, squares, isNext)),
-  checkAsWinning: (winSquares) => dispatch(checkAsWin(winSquares)),
-  checkIfLastSteps: (step, winSquaresTemp) => dispatch(checkIfLastStep(step, winSquaresTemp)),
-  checkIfNotLastSteps: (step) => dispatch(checkIfNotLastStep(step)),
+  saveHistories: (history, squares, isNext) =>
+    dispatch(saveHistory(history, squares, isNext)),
+  checkAsWinning: winSquares => dispatch(checkAsWin(winSquares)),
+  checkIfLastSteps: (step, winSquaresTemp) =>
+    dispatch(checkIfLastStep(step, winSquaresTemp)),
+  checkIfNotLastSteps: step => dispatch(checkIfNotLastStep(step)),
   resetSquaress: () => dispatch(resetSquares()),
   ascendSort: () => dispatch(ascendingSort()),
-  decreaseSort: () => dispatch(decreasingSort())
+  decreaseSort: () => dispatch(decreasingSort()),
+  setAutoCheckk: isAutoCheck => dispatch(setAutoCheck(isAutoCheck))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

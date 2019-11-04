@@ -1,5 +1,8 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import 'antd/dist/antd.css';
+import '../index.css';
 import {
   Form,
   Icon,
@@ -10,19 +13,18 @@ import {
   message,
   Checkbox
 } from 'antd';
-import { withRouter } from 'react-router-dom';
-import 'antd/dist/antd.css';
+import moment from 'moment';
+import { fetchEdit, fetchProfile } from '../../actions';
 import Swal from 'sweetalert2';
-import '../index.css';
-import { fetchRegister } from '../../actions';
-// import moment from 'moment';
 
-const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
+// const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
 
 const options = [
   { label: 'Nam', value: 'Male' },
   { label: 'Nữ', value: 'Female' }
 ];
+
+// const jwt = require('jsonwebtoken');
 
 function onChange(checkedValues) {
   console.log('checked = ', checkedValues);
@@ -46,9 +48,11 @@ function beforeUpload(file) {
   return isJpgOrPng && isLt2M;
 }
 
-class Register extends React.PureComponent {
+class Update extends React.PureComponent {
   state = {
-    loading: false
+    loading: false,
+    isDisable: true,
+    avatarLink: ''
   };
 
   handleChange = info => {
@@ -67,59 +71,63 @@ class Register extends React.PureComponent {
     }
   };
 
+  componentDidMount = () => {
+    // const { fetchedProfile } = this.props;
+    // fetchedProfile();
+
+    const { form, state } = this.props;
+    const { currentUser } = state;
+    console.log('currentUser', currentUser);
+    form.setFieldsValue({
+      email: currentUser.email,
+      username: currentUser.username,
+      password: currentUser.password,
+      date: moment(currentUser.date),
+      gender: [`${currentUser.gender}`]
+    });
+    this.setState({
+      avatarLink: currentUser.avatar
+    });
+  };
+  handleBtnEditClick = () => {
+    this.setState({
+      isDisable: false
+    });
+  };
+
   handleSubmit = e => {
-    const { form, fetchedRegister, history } = this.props;
+    const { form, fetchedEdit, state } = this.props;
     e.preventDefault();
     form.validateFields((err, values) => {
-      if (!err) {
-        // const avatar = {
-        //   fieldname: 'avatar',
-        //   originalname: values.avatar.file.name,
-        //   encodng: '7bit',
-        //   mimetype: values.avatar.file.type,
-        //   destination: './public/images/',
-        //   filename: values.avatar.file.name,
-        //   path: `public\\images\\${values.avatar.file.name}`,
-        //   size: values.avatar.file.size
-        // };
-
-        console.log('Received values of form: ', values);
-        // console.log('date: ', moment(values.date._d).format('DD/MM/YYYY'));
-        // console.log('avatar: ', avatar.path);
-        Promise.resolve(
-          fetchedRegister(
-            values.email,
-            values.username,
-            values.password,
-            values.date._d,
-            values.gender[0],
-            `http://localhost:5000/images/${values.avatar.file.name}`
-          )
+      Promise.resolve(
+        fetchedEdit(
+          state.currentUser.id,
+          values.username,
+          values.password,
+          values.date._d,
+          values.gender[0],
+          values.avatar.file.name
         )
-          .then(() => {
-            Swal.fire({
-              title: 'Thành Công!',
-              text:
-                'Bạn đã đăng ký tài khoản thành công, hãy tiến hành đăng nhập!',
-              type: 'success',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Đăng nhập'
-            }).then(result => {
-              if (result.value) {
-                history.push('/signin');
-              }
-            });
-          })
-          .catch(() => {
-            Swal.fire({
-              title: 'Thất Bại!',
-              text: 'Đăng ký không thành công, xin hãy đăng ký lại',
-              type: 'error'
-            });
+      )
+        .then(() => {
+          Swal.fire({
+            title: 'Thành Công!',
+            text: 'Cập nhập thông tin tài khoản thành công!',
+            type: 'success',
+            confirmButtonText: 'OK'
+          }).then(result => {
+            if (result.value) {
+              window.location.href = 'http://localhost:3000/';
+            }
           });
-      }
+        })
+        .catch(() => {
+          Swal.fire({
+            title: 'Thất Bại!',
+            text: 'Cập nhật không thành công, xin hãy thử lại',
+            type: 'error'
+          });
+        });
     });
   };
 
@@ -133,11 +141,10 @@ class Register extends React.PureComponent {
         <div className="ant-upload-text">Upload</div>
       </div>
     );
-    const { imageUrl } = this.state;
-
+    const { imageUrl, avatarLink } = this.state;
     return (
       <div style={{ paddingTop: '30px', paddingBottom: '50px' }}>
-        <h3 style={{ textAlign: 'center' }}>TẠO TÀI KHOẢN</h3>
+        <h3 style={{ textAlign: 'center' }}>CHỈNH SỬA THÔNG TIN TÀI KHOẢN</h3>
         <div className="create-acc-container">
           <Form onSubmit={this.handleSubmit} className="register-form">
             <Form.Item>
@@ -151,9 +158,9 @@ class Register extends React.PureComponent {
               })(
                 <Input
                   prefix={
-                    <Icon type="google" style={{ color: 'rgba(0,0,0,.25)'}} />
+                    <Icon type="google" style={{ color: 'rgba(0,0,0,.25)' }} />
                   }
-                  placeholder="Email"
+                  disabled
                 />
               )}
             </Form.Item>
@@ -170,7 +177,6 @@ class Register extends React.PureComponent {
                   prefix={
                     <Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />
                   }
-                  placeholder="Tên đăng nhập"
                 />
               )}
             </Form.Item>
@@ -186,15 +192,25 @@ class Register extends React.PureComponent {
                   }
                   type="password"
                   placeholder="Mật khẩu"
+                  disabled={this.state.isDisable ? true : false}
+                  style={{ width: '280px' }}
                 />
               )}
+              <Button
+                type="dashed"
+                shape="round"
+                style={{ float: 'right' }}
+                onClick={this.handleBtnEditClick}
+              >
+                Chỉnh sửa
+              </Button>
             </Form.Item>
             <div className="flex-justify">
               <div className="flex-wrap">
                 <Form.Item>
                   {getFieldDecorator('date', {
                     rules: [{ required: false }]
-                  })(<DatePicker format={dateFormatList} />)}
+                  })(<DatePicker format={'DD/MM/YYYY'} />)}
                 </Form.Item>
                 <Form.Item>
                   {getFieldDecorator('gender', {
@@ -215,15 +231,11 @@ class Register extends React.PureComponent {
                     beforeUpload={beforeUpload}
                     onChange={this.handleChange}
                   >
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="avatar"
-                        style={{ width: '100%' }}
-                      />
-                    ) : (
-                      uploadButton
-                    )}
+                    <img
+                      src={imageUrl ? imageUrl : avatarLink}
+                      alt="avatar"
+                      style={{ width: '100%' }}
+                    />
                   </Upload>
                 )}
               </Form.Item>
@@ -234,7 +246,7 @@ class Register extends React.PureComponent {
                 htmlType="submit"
                 className="login-form-button"
               >
-                Tạo Tài Khoản
+                Cập Nhật
               </Button>
             </Form.Item>
           </Form>
@@ -245,11 +257,16 @@ class Register extends React.PureComponent {
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchedRegister: (email, username, password, date, gender, avatar) =>
-    dispatch(fetchRegister(email, username, password, date, gender, avatar))
+  fetchedEdit: (id, username, password, date, gender, avatar) =>
+    dispatch(fetchEdit(id, username, password, date, gender, avatar)),
+  fetchedProfile: () => dispatch(fetchProfile())
+});
+
+const mapStateToProps = state => ({
+  state: state.appReducer
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
-)(Form.create()(withRouter(Register)));
+)(Form.create()(withRouter(Update)));

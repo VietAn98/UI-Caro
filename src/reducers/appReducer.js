@@ -13,7 +13,8 @@ const initialState = {
   isUp: true,
   isDown: false,
   currentUser: {},
-  status: 0
+  status: 0,
+  isAutoCheck: false
 };
 
 const appReducer = (state = initialState, action) => {
@@ -92,17 +93,22 @@ const appReducer = (state = initialState, action) => {
     case 'USER_LOGIN':
       return {
         ...state,
-        currentUser: action.user
+        currentUser: action.payload
       };
 
     case 'LOGOUT_USER':
       return { ...state, currentUser: {} };
 
     case 'USER_REGISTER':
-        return {
-          ...state,
-          status: action.status,
-        };
+      return {
+        ...state,
+        status: action.status
+      };
+    case 'SET_AUTO_CHECK':
+      return {
+        ...state,
+        isAutoCheck: !action.isAutoCheck
+      };
     default:
       return state;
   }
