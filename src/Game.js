@@ -6,11 +6,10 @@ import 'antd/dist/antd.css';
 import App from './App';
 import SignIn from './containers/SignIn';
 import Register from './containers/Register';
+import Home from './containers/Home'
 import Update from './containers/SignIn/update';
 import Chatbox from './components/Chatbox';
-import { logoutUser, fetchProfile, resetSquares } from './actions';
-
-const jwt = require('jsonwebtoken');
+import { logoutUser, fetchProfile, resetSquares, ifPlayWithAI } from './actions';
 
 class Game extends React.PureComponent {
   componentDidMount = () => {
@@ -26,11 +25,18 @@ class Game extends React.PureComponent {
     resetSquaress();
   };
 
+  onReset = () => {
+    const { resetSquaress,ifPlayWithAIs } = this.props;
+    resetSquaress()
+    ifPlayWithAIs()
+    
+  }
+
   render() {
     const tokenn = localStorage.token;
-
+    const { state } = this.props;
+    const {isPlayWithPerson} = state;
     if (tokenn != null) {
-      const { state } = this.props;
       const { currentUser } = state;
       console.log('state', state);
 
@@ -47,11 +53,11 @@ class Game extends React.PureComponent {
                   </li>
                 ) : null}
                 <li>
-                  <Link to="/">
+                  <Link to="/" onClick={this.onReset}>
                     <Icon
                       type="home"
                       style={{ color: 'rgba(103, 166, 128)' }}
-                    />{' '}
+                    />
                     Trang chủ
                   </Link>
                 </li>
@@ -60,7 +66,7 @@ class Game extends React.PureComponent {
                     <Icon
                       type="setting"
                       style={{ color: 'rgba(250, 147, 207)' }}
-                    />{' '}
+                    />
                     Cập nhập thông tin
                   </Link>
                 </li>
@@ -70,6 +76,7 @@ class Game extends React.PureComponent {
                   </Button>
                 </li>
               </ul>
+              {isPlayWithPerson? <Chatbox /> : null}
             </div>
             {/* A <Switch> looks through its children <Route>s and
               renders the first one that matches the current URL. */}
@@ -84,8 +91,14 @@ class Game extends React.PureComponent {
                 <Route path="/signin">
                   <SignIn />
                 </Route>
-                <Route path="/">
+                <Route path="/playwithperson">
                   <App />
+                </Route>
+                <Route path="/playwithai">
+                  <App />
+                </Route>
+                <Route path="/">
+                  <Home />
                 </Route>
               </Switch>
             </div>
@@ -100,7 +113,7 @@ class Game extends React.PureComponent {
           <div className="listDisplay">
             <ul style={{ listStyleType: 'none', fontSize: '20px' }}>
               <li>
-                <Link to="/">
+                <Link to="/" onClick={this.onReset}>
                   <Icon type="home" /> Trang chủ
                 </Link>
               </li>
@@ -117,20 +130,13 @@ class Game extends React.PureComponent {
                 </Link>
               </li>
             </ul>
-            <Chatbox />
+            {isPlayWithPerson? <Chatbox /> : null}
           </div>
           {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
           <div className="actionDisplay">
             <div>
-              <h1>Caro Game</h1>
-              <div style={{ float: 'right' }}>
-                <h6>
-                  <b>Chế độ:</b>{' '}
-                </h6>
-                <button>Đánh với máy</button>
-                <button>Đánh với người</button>
-              </div>
+              <h1>CARO GAME</h1>
             </div>
             <div className="caroBoard">
               <Switch>
@@ -140,8 +146,14 @@ class Game extends React.PureComponent {
                 <Route path="/signin">
                   <SignIn />
                 </Route>
-                <Route path="/">
+                <Route path="/playwithperson">
                   <App />
+                </Route>
+                <Route path="/playwithai">
+                  <App />
+                </Route>
+                <Route path="/">
+                  <Home />
                 </Route>
               </Switch>
             </div>
@@ -158,7 +170,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   fetchedProfile: () => dispatch(fetchProfile()),
   userLogout: () => dispatch(logoutUser()),
-  resetSquaress: () => dispatch(resetSquares())
+  resetSquaress: () => dispatch(resetSquares()),
+  ifPlayWithAIs: () => dispatch(ifPlayWithAI())
 });
 export default connect(
   mapStateToProps,

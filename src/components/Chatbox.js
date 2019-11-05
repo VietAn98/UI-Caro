@@ -1,23 +1,64 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Button, Form, InputGroup, FormControl } from 'react-bootstrap';
 import '../index.css';
-class Chatbox extends React.PureComponent {
+import SocketIO from 'socket.io-client';
+import { setChatBox } from '../actions';
+import { connect } from 'react-redux';
+
+const messList = [];
+const io = SocketIO.connect('http://localhost:5000');
+
+class Chatbox extends React.Component {
+  constructor(props) {
+    super(props);
+
+    const { state } = this.props;
+    const { currentUser } = state;
+
+    io.on('BroadcastMessage', message => {
+      messList.push(
+        <div
+          style={
+            currentUser.username === message.user.username
+              ? { textAlign: '-webkit-right', marginBottom: '10px' }
+              : { textAlign: '-webkit-left', marginBottom: '10px' }
+          }
+        >
+          <div className="message-time">{message.user.username}</div>
+          <div
+            className="message-text"
+            style={{ background: 'linear-gradient(#02aab0, #00cdac)' }}
+          >
+            {message.value}
+          </div>
+        </div>
+      );
+      const { setChatBoxx } = this.props;
+      setChatBoxx(messList);
+    });
+  }
+
+  sendMessage = e => {
+    const { state } = this.props;
+    const { currentUser } = state;
+    e.preventDefault();
+    io.emit('AddMessage', {
+      value: e.target.messageText.value,
+      user: currentUser
+    });
+  };
+
   render() {
+    const { state } = this.props;
+    const { messageLists } = state;
+    console.log('mesList', messageLists);
     return (
       <div className="messenger" style={{ color: 'black' }}>
         <div className="message-header">CHAT BOX</div>
         <hr style={{ marginTop: '30px' }} />
 
         <div className="message-body" id="message-body">
-          <div style={{ marginBottom: '10px' }}>
-            <div
-              className="message-text"
-              style={{ background: 'linear-gradient(#02aab0, #00cdac)' }}
-            >
-              ạdasjdjas
-            </div>
-            <div className="message-time">ádasd</div>
-          </div>
+          {messageLists}
         </div>
 
         <Form onSubmit={this.sendMessage} autoComplete="off">
@@ -42,4 +83,14 @@ class Chatbox extends React.PureComponent {
     );
   }
 }
-export default Chatbox;
+
+const mapStateToProps = state => ({
+  state: state.appReducer
+});
+const mapDispatchToProps = dispatch => ({
+  setChatBoxx: mess => dispatch(setChatBox(mess))
+});
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Chatbox);

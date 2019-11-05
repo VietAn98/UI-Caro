@@ -2,6 +2,8 @@ import React from 'react';
 import Swal from 'sweetalert2';
 import { connect } from 'react-redux';
 import './App.css';
+import SocketIO from 'socket.io-client';
+import { Icon, Button } from 'antd';
 import Board from './components/Board';
 import {
   saveHistory,
@@ -11,18 +13,42 @@ import {
   resetSquares,
   ascendingSort,
   decreasingSort,
-  setAutoCheck
+  setAutoCheck,
+  ifPlayWithPerson,
+  ifPlayWithAI
 } from './actions/index';
 
+let nextPerson = true;
+const io = SocketIO.connect('http://localhost:5000');
+
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    const { state } = this.props;
+    const { currentUser } = state;
+
+    io.on('BroadcastStep', message => {
+      if (message.user.username !== currentUser.username) {
+        nextPerson = true;
+      } else {
+        nextPerson = false;
+      }
+      this.onHandleClick(message.index);
+    });
+  }
+
   componentDidUpdate = () => {
     const { state } = this.props;
-    const { isAutoCheck } = state;
-    if (isAutoCheck === true) {
-      setTimeout(() => {
-        this.onHandleClick(Math.floor(Math.random() * 399));
-      }, 200);
+    const { isAutoCheck, isPlayWithPerson } = state;
+    if (isPlayWithPerson === false) {
+      if (isAutoCheck === true) {
+        setTimeout(() => {
+          this.onHandleClick(Math.floor(Math.random() * 399));
+        }, 200);
+      }
     }
+    return null;
   };
 
   onHandleClick = i => {
@@ -980,9 +1006,26 @@ class App extends React.Component {
     return null;
   }
 
+  clickSquare = o => {
+    const { state } = this.props;
+    const { isPlayWithPerson } = state;
+
+    if (nextPerson) {
+      if (isPlayWithPerson) {
+        const { currentUser } = state;
+        io.emit('AddStep', {
+          index: o,
+          user: currentUser,
+        });
+      } else {
+        this.onHandleClick(o);
+      }
+    }
+  };
+
   render() {
     const { state } = this.props;
-    const { history, stepNumber, isNext, isDown, winSquares } = state;
+    const { history, stepNumber, isNext, isDown, winSquares, isHidden } = state;
     const current = history[stepNumber];
     const status = ` Người chơi: ${isNext ? 'X' : 'O'}`;
     let moves = history.map((step, move) => {
@@ -1010,45 +1053,52 @@ class App extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board
-            squares={current.squares}
-            isNext={isNext}
-            onHandleClick={this.onHandleClick}
-            winSquares={winSquares}
-          />
+          {isHidden ? (
+            <Board
+              squares={current.squares}
+              isNext={isNext}
+              onHandleClick={index => this.clickSquare(index)}
+              winSquares={winSquares}
+            />
+          ) : null}
         </div>
         <div className="game-info">
-          <div>{status}</div>
+          <div>{isHidden ? status : null}</div>
           <br />
           <div>
-            <button
-              onClick={() => this.Reset()}
-              type="button"
-              className="restart btn btn-outline-danger"
-            >
-              Chơi lại
-            </button>
+            {isHidden === false ? null : (
+              <button
+                onClick={() => this.Reset()}
+                type="button"
+                className="restart btn btn-outline-danger"
+              >
+                Chơi lại
+              </button>
+            )}
           </div>
           <br />
           <div>
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              onClick={() => this.jumpTo(jumps)}
-            >
-              Undo
-            </button>{' '}
-            &emsp;
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              onClick={() => this.jumpTo(history.length - 1)}
-            >
-              Redo
-            </button>
+            {isHidden === false ? null : (
+              <div>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => this.jumpTo(jumps)}
+                >
+                  Undo
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => this.jumpTo(history.length - 1)}
+                >
+                  Redo
+                </button>
+              </div>
+            )}
           </div>
           <br />
-          <ol>{moves}</ol>
+          {isHidden === false ? null : <ol>{moves}</ol>}
         </div>
       </div>
     );
@@ -1069,7 +1119,9 @@ const mapDispatchToProps = dispatch => ({
   resetSquaress: () => dispatch(resetSquares()),
   ascendSort: () => dispatch(ascendingSort()),
   decreaseSort: () => dispatch(decreasingSort()),
-  setAutoCheckk: isAutoCheck => dispatch(setAutoCheck(isAutoCheck))
+  setAutoCheckk: isAutoCheck => dispatch(setAutoCheck(isAutoCheck)),
+  ifPlayWithPersonn: () => dispatch(ifPlayWithPerson()),
+  ifPlayWithAIs: () => dispatch(ifPlayWithAI())
 });
 
 export default connect(

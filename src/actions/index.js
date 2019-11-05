@@ -89,8 +89,6 @@ export const fetchProfile = () => {
       return axios
         .get('http://localhost:5000/me', {
           headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
             Authorization: `Bearer ${tokenn}`
           }
         })
@@ -99,7 +97,7 @@ export const fetchProfile = () => {
           if (data.message) {
             localStorage.removeItem('token');
           } else {
-            // console.log('data/me', data[0]);
+            console.log('data/me', data[0]);
             dispatch(userLogin(data[0]));
           }
         });
@@ -139,3 +137,20 @@ export const setAutoCheck = (isAutoCheck) => ({
   type: 'SET_AUTO_CHECK',
   isAutoCheck
 });
+
+export const ifPlayWithPerson = () => ({
+  type: 'IS_PLAY_WITH_PERSON',
+})
+
+export const ifPlayWithAI = () => ({
+  type: 'IS_PLAY_WITH_AI',
+})
+
+export const isHiddenOrNot = () => ({
+  type: 'IS_HIDDEN_OR_NOT',
+})
+
+export const setChatBox = (message) => ({
+  type: 'SET_CHAT_BOX',
+  message
+})

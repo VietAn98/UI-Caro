@@ -14,7 +14,11 @@ const initialState = {
   isDown: false,
   currentUser: {},
   status: 0,
-  isAutoCheck: false
+  isAutoCheck: false,
+  isPlayWithPerson: false,
+  isPlayWithAI: false,
+  isHidden: false,
+  messageLists: []
 };
 
 const appReducer = (state = initialState, action) => {
@@ -73,7 +77,7 @@ const appReducer = (state = initialState, action) => {
         winSquares: [],
         winSquaresTemp: [],
         isUp: true,
-        isDown: false
+        isDown: false,
       };
 
     case 'ASCENDING_SORT':
@@ -108,6 +112,28 @@ const appReducer = (state = initialState, action) => {
       return {
         ...state,
         isAutoCheck: !action.isAutoCheck
+      };
+    case 'IS_PLAY_WITH_PERSON':
+      return {
+        ...state,
+        isPlayWithPerson: true,
+        isPlayWithAI: false
+      };
+    case 'IS_PLAY_WITH_AI':
+      return {
+        ...state,
+        isPlayWithPerson: false,
+        isPlayWithAI: true
+      };
+    case 'IS_HIDDEN_OR_NOT':
+      return {
+        ...state,
+        isHidden: true
+      };
+    case 'SET_CHAT_BOX':
+      return {
+        ...state,
+        messageLists: action.message
       };
     default:
       return state;

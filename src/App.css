@@ -82,7 +82,9 @@ ol, ul {
 }
 
 .game-info {
-  margin-left: 20px;
+  margin-left: 60px;
+  margin-right: 10px;
+  width: 20%;
 }
 .restart{
   width: 100px;

@@ -97,6 +97,7 @@ class Update extends React.PureComponent {
 
   handleSubmit = e => {
     const { form, fetchedEdit, state } = this.props;
+    const { avatarLink } = this.state;
     e.preventDefault();
     form.validateFields((err, values) => {
       Promise.resolve(
@@ -106,7 +107,7 @@ class Update extends React.PureComponent {
           values.password,
           values.date._d,
           values.gender[0],
-          values.avatar.file.name
+          avatarLink ? avatarLink : values.avatar.file.name
         )
       )
         .then(() => {
