@@ -41,10 +41,9 @@ export const userRegister = status => ({
 });
 
 export function fetchRegister(email, username, password, date, gender, avatar) {
-  console.log('avatar/register', avatar);
   return dispatch => {
     return axios
-      .post(`http://localhost:5000/user/register`, {
+      .post(`https://caro-api-1612907.herokuapp.com/user/register`, {
         email,
         username,
         password,
@@ -66,7 +65,7 @@ export const userLogin = user => ({
 export function fetchLogin(email, password) {
   return dispatch => {
     return axios
-      .post(`http://localhost:5000/user/login`, {
+      .post(`https://caro-api-1612907.herokuapp.com/user/login`, {
         email,
         password
       })
@@ -87,7 +86,7 @@ export const fetchProfile = () => {
     const tokenn = localStorage.token;
     if (tokenn) {
       return axios
-        .get('http://localhost:5000/me', {
+        .get('https://caro-api-1612907.herokuapp.com/me', {
           headers: {
             Authorization: `Bearer ${tokenn}`
           }
@@ -97,7 +96,6 @@ export const fetchProfile = () => {
           if (data.message) {
             localStorage.removeItem('token');
           } else {
-            console.log('data/me', data[0]);
             dispatch(userLogin(data[0]));
           }
         });
@@ -113,7 +111,7 @@ export const logoutUser = () => ({
 export function fetchEdit(id, username, password, date, gender, avatar) {
   return dispatch => {
     return axios
-      .post(`http://localhost:5000/user/edit`, {
+      .post(`https://caro-api-1612907.herokuapp.com/user/edit`, {
         id,
         username,
         password,

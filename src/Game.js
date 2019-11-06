@@ -38,10 +38,6 @@ class Game extends React.PureComponent {
     const {isPlayWithPerson} = state;
     if (tokenn != null) {
       const { currentUser } = state;
-      console.log('state', state);
-
-      // const decodeToken = jwt.decode(tokenn);
-      // console.log('state.currentUser.username', currentUser.username);
       return (
         <Router>
           <div className="container">

@@ -19,7 +19,7 @@ import {
 } from './actions/index';
 
 let nextPerson = true;
-const io = SocketIO.connect('http://localhost:5000');
+const io = SocketIO.connect('https://caro-api-1612907.herokuapp.com');
 
 class App extends React.Component {
   constructor(props) {

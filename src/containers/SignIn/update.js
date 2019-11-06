@@ -72,12 +72,8 @@ class Update extends React.PureComponent {
   };
 
   componentDidMount = () => {
-    // const { fetchedProfile } = this.props;
-    // fetchedProfile();
-
     const { form, state } = this.props;
     const { currentUser } = state;
-    console.log('currentUser', currentUser);
     form.setFieldsValue({
       email: currentUser.email,
       username: currentUser.username,
@@ -107,7 +103,9 @@ class Update extends React.PureComponent {
           values.password,
           values.date._d,
           values.gender[0],
-          avatarLink ? avatarLink : values.avatar.file.name
+          values.avatar.file.name
+            ? `https://caro-api-1612907.herokuapp.com/images/${values.avatar.file.name}`
+            : avatarLink
         )
       )
         .then(() => {
@@ -118,7 +116,7 @@ class Update extends React.PureComponent {
             confirmButtonText: 'OK'
           }).then(result => {
             if (result.value) {
-              window.location.href = 'http://localhost:3000/';
+              window.location.href = 'https://localhost:3000/';
             }
           });
         })
@@ -228,7 +226,7 @@ class Update extends React.PureComponent {
                     listType="picture-card"
                     className="avatar-uploader"
                     showUploadList={false}
-                    action="http://localhost:5000/photo"
+                    action="https://caro-api-1612907.herokuapp.com/photo"
                     beforeUpload={beforeUpload}
                     onChange={this.handleChange}
                   >

@@ -72,20 +72,6 @@ class Register extends React.PureComponent {
     e.preventDefault();
     form.validateFields((err, values) => {
       if (!err) {
-        // const avatar = {
-        //   fieldname: 'avatar',
-        //   originalname: values.avatar.file.name,
-        //   encodng: '7bit',
-        //   mimetype: values.avatar.file.type,
-        //   destination: './public/images/',
-        //   filename: values.avatar.file.name,
-        //   path: `public\\images\\${values.avatar.file.name}`,
-        //   size: values.avatar.file.size
-        // };
-
-        console.log('Received values of form: ', values);
-        // console.log('date: ', moment(values.date._d).format('DD/MM/YYYY'));
-        // console.log('avatar: ', avatar.path);
         Promise.resolve(
           fetchedRegister(
             values.email,
@@ -93,7 +79,7 @@ class Register extends React.PureComponent {
             values.password,
             values.date._d,
             values.gender[0],
-            `http://localhost:5000/images/${values.avatar.file.name}`
+            `https://caro-api-1612907.herokuapp.com/images/${values.avatar.file.name}`
           )
         )
           .then(() => {
@@ -211,7 +197,7 @@ class Register extends React.PureComponent {
                     listType="picture-card"
                     className="avatar-uploader"
                     showUploadList={false}
-                    action="http://localhost:5000/photo"
+                    action="https://caro-api-1612907.herokuapp.com/photo"
                     beforeUpload={beforeUpload}
                     onChange={this.handleChange}
                   >

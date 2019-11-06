@@ -9,6 +9,7 @@ import {
 } from '../../actions/index';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import '../index.css'
 
 class Home extends React.PureComponent {
   onPlayWithPerson = () => {
@@ -39,7 +40,7 @@ class Home extends React.PureComponent {
   render() {
     return (
       <Router>
-        <div style={{ marginBottom: '100px' }}>
+        <div className="homePage">
           <h6>
             <b>Hãy chọn Chế độ chơi:</b>
           </h6>

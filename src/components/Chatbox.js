@@ -6,7 +6,7 @@ import { setChatBox } from '../actions';
 import { connect } from 'react-redux';
 
 const messList = [];
-const io = SocketIO.connect('http://localhost:5000');
+const io = SocketIO.connect('https://caro-api-1612907.herokuapp.com');
 
 class Chatbox extends React.Component {
   constructor(props) {
@@ -51,7 +51,6 @@ class Chatbox extends React.Component {
   render() {
     const { state } = this.props;
     const { messageLists } = state;
-    console.log('mesList', messageLists);
     return (
       <div className="messenger" style={{ color: 'black' }}>
         <div className="message-header">CHAT BOX</div>
