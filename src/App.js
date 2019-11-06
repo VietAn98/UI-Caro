@@ -53,7 +53,7 @@ class App extends React.Component {
 
   onHandleClick = i => {
     const { state, saveHistories, checkAsWinning, setAutoCheckk } = this.props;
-    let { history, isAutoCheck } = state;
+    let { history, isAutoCheck, isPlayWithAI } = state;
     const { stepNumber, checkWin, isNext } = state;
     history = history.slice(0, stepNumber + 1);
     const current = history[history.length - 1];
@@ -65,7 +65,9 @@ class App extends React.Component {
 
     if (squares[i] === null) {
       squares[i] = isNext ? 'X' : 'O';
-      setAutoCheckk(isAutoCheck);
+      if (isPlayWithAI) {
+        setAutoCheckk(isAutoCheck);
+      }
       saveHistories(history, squares, isNext);
       switch (squares[i]) {
         default:
@@ -947,13 +949,16 @@ class App extends React.Component {
   };
 
   jumpTo(step) {
-    const { state, checkIfLastSteps, checkIfNotLastSteps } = this.props;
+    const { state, checkIfLastSteps, checkIfNotLastSteps,setAutoCheckk } = this.props;
     const { history, win, winSquaresTemp } = state;
     const endPoint = history.length - 1;
     if (win === true && step === endPoint) {
       checkIfLastSteps(step, winSquaresTemp);
     } else {
       checkIfNotLastSteps(step);
+      if (step % 2 != 0) {
+        setAutoCheckk();
+      }
     }
   }
 
@@ -1015,7 +1020,7 @@ class App extends React.Component {
         const { currentUser } = state;
         io.emit('AddStep', {
           index: o,
-          user: currentUser,
+          user: currentUser
         });
       } else {
         this.onHandleClick(o);

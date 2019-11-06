@@ -78,6 +78,10 @@ const appReducer = (state = initialState, action) => {
         winSquaresTemp: [],
         isUp: true,
         isDown: false,
+        isAutoCheck: false,
+        isPlayWithPerson: false,
+        isPlayWithAI: false,
+        isHidden: false
       };
 
     case 'ASCENDING_SORT':

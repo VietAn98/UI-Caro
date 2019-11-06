@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 class Home extends React.PureComponent {
-  onPlayWithPersonClick = () => {
+  onPlayWithPerson = () => {
     const {
       ifPlayWithPersonn,
       history,
@@ -34,7 +34,7 @@ class Home extends React.PureComponent {
     resetSquaress();
     ifPlayWithAIs();
     isHiddenOrNott();
-    history.push('/playwithperson');
+    history.push('/playwithai');
   };
   render() {
     return (
@@ -45,7 +45,7 @@ class Home extends React.PureComponent {
           </h6>
           <Button onClick={this.onPlayWithAI}>Đánh với máy</Button>
           <br></br>
-          <Button onClick={this.onPlayWithPersonClick}>Đánh với người</Button>
+          <Button onClick={this.onPlayWithPerson}>Đánh với người</Button>
         </div>
       </Router>
     );
