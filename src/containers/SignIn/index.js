@@ -90,6 +90,9 @@ class SignIn extends React.PureComponent {
           fields="name,email,picture"
           callback={this.responseFacebook}
           onClick={this.onClickFacebookIcon}
+          cssClass="btnFacebook"
+          icon={<i class="fab fa-facebook-f" style={{ marginLeft: '5px' }}></i>}
+          textButton="&nbsp;&nbsp;Facebook"
         />
       );
     }
@@ -140,16 +143,21 @@ class SignIn extends React.PureComponent {
                 Đăng nhập
               </Button>
             </Form.Item>
-            <Form.Item>{fbContent}</Form.Item>
-            <Form.Item>
-              <GoogleLogin
-                clientId="246107652164-0c2g1us38ojg2o95f3l180h0tllh2tkp.apps.googleusercontent.com"
-                buttonText="Login"
-                onSuccess={this.responseGoogle}
-                onFailure={this.responseGoogle}
-                cookiePolicy={'single_host_origin'}
-              />
-            </Form.Item>
+            <span><p style={{textAlign: 'center'}}>Hoặc đăng nhập bằng</p></span>
+            <div className="flex-wrap">
+              <Form.Item>{fbContent}</Form.Item>
+              <Form.Item>
+                <GoogleLogin
+                  clientId="246107652164-0c2g1us38ojg2o95f3l180h0tllh2tkp.apps.googleusercontent.com"
+                  onSuccess={this.responseGoogle}
+                  onFailure={this.responseGoogle}
+                  cookiePolicy={'single_host_origin'}
+                  className="btnGoogle"
+                >
+                  <span>&nbsp;&nbsp;Google</span>
+                </GoogleLogin>
+              </Form.Item>
+            </div>
           </Form>
         </div>
       </div>

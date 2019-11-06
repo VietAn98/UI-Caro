@@ -121,8 +121,8 @@ class Game extends React.PureComponent {
               </li>
               <li>
                 <Link to="/signin">
-                  <Icon type="heart" theme="twoTone" twoToneColor="#52c41a" />
-                  Đăng nhập
+                  <Icon type="heart" theme="twoTone" twoToneColor="#52c41a" />{' '}
+                   Đăng nhập
                 </Link>
               </li>
             </ul>
