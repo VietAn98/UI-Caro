@@ -17,7 +17,7 @@ class Home extends React.PureComponent {
     const { state, history } = this.props;
     const { currentUser } = state;
 
-    if (currentUser === {}) {
+    if (currentUser.username !== '') {
       const { ifPlayWithPersonn, isHiddenOrNott, resetSquaress } = this.props;
       resetSquaress();
       ifPlayWithPersonn();
@@ -44,7 +44,7 @@ class Home extends React.PureComponent {
     const { state, history } = this.props;
     const { currentUser } = state;
 
-    if (currentUser === {}) {
+    if (currentUser.username !== '') {
       const {
         ifPlayWithAIs,
         isHiddenOrNott,
