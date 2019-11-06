@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Button } from 'antd';
+import { Button } from 'antd';
 import { BrowserRouter as Router } from 'react-router-dom';
 import {
   ifPlayWithPerson,
@@ -9,42 +9,81 @@ import {
 } from '../../actions/index';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import '../index.css'
+import '../index.css';
+import Swal from 'sweetalert2';
 
 class Home extends React.PureComponent {
   onPlayWithPerson = () => {
-    const {
-      ifPlayWithPersonn,
-      history,
-      isHiddenOrNott,
-      resetSquaress
-    } = this.props;
-    resetSquaress();
-    ifPlayWithPersonn();
-    isHiddenOrNott();
-    history.push('/playwithperson');
+    const { state, history } = this.props;
+    const { currentUser } = state;
+
+    if (currentUser === {}) {
+      const { ifPlayWithPersonn, isHiddenOrNott, resetSquaress } = this.props;
+      resetSquaress();
+      ifPlayWithPersonn();
+      isHiddenOrNott();
+      history.push('/playwithperson');
+    } else {
+      Swal.fire({
+        title: 'Warning!',
+        text: 'Bạn chưa đăng nhập, hãy đăng nhập để tiến hành chơi game!',
+        type: 'error',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Đăng nhập'
+      }).then(result => {
+        if (result.value) {
+          history.push('/signin');
+        }
+      });
+    }
   };
 
   onPlayWithAI = () => {
-    const {
-      ifPlayWithAIs,
-      isHiddenOrNott,
-      history,
-      resetSquaress
-    } = this.props;
-    resetSquaress();
-    ifPlayWithAIs();
-    isHiddenOrNott();
-    history.push('/playwithai');
+    const { state, history } = this.props;
+    const { currentUser } = state;
+
+    if (currentUser === {}) {
+      const {
+        ifPlayWithAIs,
+        isHiddenOrNott,
+        history,
+        resetSquaress
+      } = this.props;
+      resetSquaress();
+      ifPlayWithAIs();
+      isHiddenOrNott();
+      history.push('/playwithai');
+    } else {
+      Swal.fire({
+        title: 'Warning!',
+        text: 'Bạn chưa đăng nhập, hãy đăng nhập để tiến hành chơi game!',
+        type: 'error',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Đăng nhập'
+      }).then(result => {
+        if (result.value) {
+          history.push('/signin');
+        }
+      });
+    }
   };
   render() {
     return (
       <Router>
+        <h1 style={{ textAlign: 'center' }}>
+          <b>WELCOME TO CARO GAME PLAY</b>
+        </h1>
         <div className="homePage">
           <h6>
             <b>Hãy chọn Chế độ chơi:</b>
           </h6>
-          <Button onClick={this.onPlayWithAI}>Đánh với máy</Button>
+          <Button onClick={this.onPlayWithAI} style={{ marginBottom: '20px' }}>
+            Đánh với máy
+          </Button>
           <br></br>
           <Button onClick={this.onPlayWithPerson}>Đánh với người</Button>
         </div>

@@ -3,7 +3,6 @@ import Swal from 'sweetalert2';
 import { connect } from 'react-redux';
 import './App.css';
 import SocketIO from 'socket.io-client';
-import { Icon, Button } from 'antd';
 import Board from './components/Board';
 import {
   saveHistory,
@@ -956,7 +955,7 @@ class App extends React.Component {
       checkIfLastSteps(step, winSquaresTemp);
     } else {
       checkIfNotLastSteps(step);
-      if (step % 2 != 0) {
+      if (step % 2 !== 0) {
         setAutoCheckk();
       }
     }

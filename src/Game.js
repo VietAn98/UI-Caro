@@ -131,9 +131,6 @@ class Game extends React.PureComponent {
           {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
           <div className="actionDisplay">
-            <div>
-              <h1>CARO GAME</h1>
-            </div>
             <div className="caroBoard">
               <Switch>
                 <Route path="/register">
